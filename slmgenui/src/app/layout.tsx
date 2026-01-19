@@ -10,6 +10,7 @@
 
 import type { Metadata, Viewport } from 'next';
 import { Fira_Code } from 'next/font/google';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { AuthProvider } from '@/contexts/auth-context';
 import './globals.css';
 
@@ -159,6 +160,7 @@ export default function RootLayout({
         <AuthProvider>
           {children}
         </AuthProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
