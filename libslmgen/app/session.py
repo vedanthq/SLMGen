@@ -15,7 +15,7 @@ import logging
 from datetime import datetime, timedelta, timezone
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, Any
+from typing import Optional
 
 from .config import settings
 from .models import DatasetStats, DatasetCharacteristics, TaskType, DeploymentTarget
@@ -71,7 +71,6 @@ class SessionManager:
     
     def _cleanup_expired(self) -> int:
         """Remove expired sessions, returns count Removed."""
-        now = datetime.now(timezone.utc)
         expired_ids = [
             sid for sid, sess in self._sessions.items()
             if sess.is_expired()

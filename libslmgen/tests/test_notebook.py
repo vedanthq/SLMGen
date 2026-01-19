@@ -12,7 +12,6 @@ Covers:
 
 import json
 import base64
-import pytest
 from pathlib import Path
 
 # Import with path adjustment for test environment
@@ -21,7 +20,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from core.notebook import (
     generate_notebook,
     _get_lora_targets,
-    LORA_TARGETS,
     _DEFAULT_LORA_TARGETS,
 )
 

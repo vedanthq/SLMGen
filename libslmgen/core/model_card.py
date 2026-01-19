@@ -65,8 +65,8 @@ def generate_model_card(
     sections.append("| Property | Value |")
     sections.append("|----------|-------|")
     sections.append(f"| Base Model | {model_name} |")
-    sections.append(f"| Fine-tuning Method | LoRA (Low-Rank Adaptation) |")
-    sections.append(f"| Training Framework | Unsloth + TRL |")
+    sections.append("| Fine-tuning Method | LoRA (Low-Rank Adaptation) |")
+    sections.append("| Training Framework | Unsloth + TRL |")
     sections.append(f"| Dataset Quality | {int(quality_score * 100)}% |")
     sections.append("")
     

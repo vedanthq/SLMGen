@@ -9,7 +9,6 @@ Covers:
 - Multi-turn bonus correctness
 """
 
-import pytest
 from pathlib import Path
 
 # Import with path adjustment for test environment
@@ -22,7 +21,6 @@ from core.recommender import (
     _score_data_fit,
     _apply_bonuses,
     MODELS,
-    ModelSpec,
 )
 from app.models import (
     TaskType,

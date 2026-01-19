@@ -15,7 +15,6 @@ FIX: C1 - Implementing missing module from spec.
 import re
 import logging
 from dataclasses import dataclass
-from collections import Counter
 
 logger = logging.getLogger(__name__)
 

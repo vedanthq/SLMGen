@@ -13,11 +13,10 @@ import logging
 from typing import Optional
 from dataclasses import dataclass
 
-from fastapi import Request, HTTPException, Depends
+from fastapi import HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, JWTError
 
-from app.supabase import get_jwt_secret
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +66,6 @@ def verify_jwt(token: str) -> dict:
     """
     import requests
     from jose import jwk
-    from jose.utils import base64url_decode
     
     try:
         # Get the unverified header to find the key ID

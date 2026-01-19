@@ -14,14 +14,14 @@ Handles CORS, routing, and lifecycle events.
 from dotenv import load_dotenv
 load_dotenv()
 
-import logging
-from contextlib import asynccontextmanager
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+import logging  # noqa: E402
+from contextlib import asynccontextmanager  # noqa: E402
+from fastapi import FastAPI  # noqa: E402
+from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
 
-from app.config import settings
-from app.session import session_manager
-from app.routers import upload, analyze, recommend, generate, jobs, preview, advanced
+from app.config import settings  # noqa: E402
+from app.session import session_manager  # noqa: E402
+from app.routers import upload, analyze, recommend, generate, jobs, preview, advanced  # noqa: E402
 
 # Setup Logging
 logging.basicConfig(

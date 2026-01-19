@@ -9,7 +9,6 @@ Handles env vars and settings for the SLMGEN backend.
 # License: MIT License
 # Copyright (c) 2026 Eshan Roy
 
-import os
 from pathlib import Path
 from pydantic_settings import BaseSettings
 

@@ -132,7 +132,7 @@ async def upload_to_storage(
     else:
         full_path = path
     
-    result = client.storage.from_(bucket).upload(
+    client.storage.from_(bucket).upload(
         full_path,
         file_content,
         {"content-type": content_type}

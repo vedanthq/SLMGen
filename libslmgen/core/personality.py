@@ -149,7 +149,7 @@ def _analyze_strictness(responses: list[str]) -> tuple[str, float]:
     avg_len = sum(lengths) / len(lengths)
     
     # Calculate variance
-    variance = sum((l - avg_len) ** 2 for l in lengths) / len(lengths)
+    variance = sum((length - avg_len) ** 2 for length in lengths) / len(lengths)
     std_dev = variance ** 0.5
     coef_of_var = std_dev / avg_len if avg_len > 0 else 0
     

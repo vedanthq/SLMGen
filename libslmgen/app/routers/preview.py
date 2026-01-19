@@ -9,7 +9,7 @@ Provides dataset preview and analysis endpoints.
 """
 
 from fastapi import APIRouter, HTTPException, status
-from typing import List, Dict, Any, Optional
+from typing import List, Dict
 from pydantic import BaseModel
 from collections import Counter
 

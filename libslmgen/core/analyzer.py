@@ -12,7 +12,6 @@ Things like: is it multilingual? Does it look like JSON output? etc.
 
 import re
 import logging
-from collections import Counter
 
 from app.models import DatasetCharacteristics
 

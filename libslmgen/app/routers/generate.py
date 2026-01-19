@@ -17,7 +17,7 @@ from fastapi.responses import FileResponse
 from app.config import settings
 from app.session import session_manager
 from app.models import GenerateRequest, NotebookResponse
-from core import generate_notebook, ingest_data
+from core import generate_notebook
 from core.recommender import MODELS
 
 logger = logging.getLogger(__name__)

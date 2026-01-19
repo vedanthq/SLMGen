@@ -304,7 +304,7 @@ This will take approximately **{training_time} minutes** on a T4 GPU.
 
 Watch the loss decrease - that means the model is learning!
 """))
-    cells.append(_make_code_cell(f"""from trl import SFTTrainer
+    cells.append(_make_code_cell("""from trl import SFTTrainer
 from transformers import TrainingArguments
 
 trainer = SFTTrainer(
@@ -336,8 +336,8 @@ print("🚀 Starting training...")
 trainer_stats = trainer.train()
 
 print("\\n✅ Training complete!")
-print(f"Training loss: {{trainer_stats.training_loss:.4f}}")
-print(f"Training time: {{trainer_stats.metrics['train_runtime'] / 60:.1f}} minutes")
+print(f"Training loss: {trainer_stats.training_loss:.4f}")
+print(f"Training time: {trainer_stats.metrics['train_runtime'] / 60:.1f} minutes")
 """))
     
     # 10. Save Adapter
