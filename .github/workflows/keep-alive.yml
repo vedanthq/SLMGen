@@ -1,0 +1,22 @@
+# Keep Render server warm by pinging every 14 minutes
+# Prevents cold start delays on free tier
+
+name: Keep Alive
+
+on:
+  schedule:
+    # Every 14 minutes
+    - cron: '*/14 * * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping API
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://slmgen-api.onrender.com/health)
+          echo "Health check response: $response"
+          if [ "$response" != "200" ]; then
+            echo "Warning: Health check returned $response"
+          fi
