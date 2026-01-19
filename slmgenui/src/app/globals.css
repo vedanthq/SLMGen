@@ -29,6 +29,7 @@
   --accent-blue: #67b0e8;
   --accent-purple: #c47fd5;
   --accent-teal: #6cbfbf;
+  --accent-cyan: #8bd5ca;
   --accent-orange: #fcb163;
 }
 
@@ -37,7 +38,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-fira), 'Courier New', monospace;
+  font-family: var(--font-sansita), 'Courier New', monospace;
 }
 
 /* Gradient text utility - Everblush */
