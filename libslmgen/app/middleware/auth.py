@@ -53,6 +53,9 @@ def verify_jwt(token: str) -> dict:
     """
     Verify and decode a Supabase JWT token.
     
+    Supabase uses ES256 (ECDSA) for JWT signing. We fetch the public keys
+    from their JWKS endpoint to verify tokens.
+    
     Args:
         token: JWT access token
         
@@ -62,15 +65,64 @@ def verify_jwt(token: str) -> dict:
     Raises:
         HTTPException: If token is invalid
     """
+    import requests
+    from jose import jwk
+    from jose.utils import base64url_decode
+    
     try:
-        # get_jwt_secret() now returns the decoded bytes directly
-        payload = jwt.decode(
-            token,
-            get_jwt_secret(),
-            algorithms=["HS256"],
-            options={"verify_aud": False}
-        )
-        return payload
+        # Get the unverified header to find the key ID
+        unverified_header = jwt.get_unverified_header(token)
+        token_alg = unverified_header.get("alg", "unknown")
+        kid = unverified_header.get("kid")
+        
+        logger.info(f"Token algorithm: {token_alg}, kid: {kid}")
+        
+        # For ES256 tokens, fetch JWKS from Supabase
+        if token_alg == "ES256":
+            from app.supabase import get_supabase_url
+            jwks_url = f"{get_supabase_url()}/auth/v1/.well-known/jwks.json"
+            
+            try:
+                resp = requests.get(jwks_url, timeout=5)
+                resp.raise_for_status()
+                jwks = resp.json()
+            except Exception as e:
+                logger.error(f"Failed to fetch JWKS: {e}")
+                raise HTTPException(status_code=500, detail="Failed to fetch signing keys")
+            
+            # Find the key matching the kid
+            rsa_key = None
+            for key in jwks.get("keys", []):
+                if key.get("kid") == kid:
+                    rsa_key = key
+                    break
+            
+            if not rsa_key:
+                logger.warning(f"No matching key found for kid: {kid}")
+                raise HTTPException(status_code=401, detail="Invalid token signing key")
+            
+            # Convert JWK to PEM format for jose
+            public_key = jwk.construct(rsa_key)
+            
+            payload = jwt.decode(
+                token,
+                public_key,
+                algorithms=["ES256"],
+                options={"verify_aud": False}
+            )
+            return payload
+        
+        # Fallback to HS256 for older tokens
+        else:
+            from app.supabase import get_jwt_secret
+            payload = jwt.decode(
+                token,
+                get_jwt_secret(),
+                algorithms=["HS256"],
+                options={"verify_aud": False}
+            )
+            return payload
+            
     except JWTError as e:
         logger.warning(f"JWT verification failed: {e}")
         raise HTTPException(

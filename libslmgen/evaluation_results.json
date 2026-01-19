@@ -1,0 +1,81 @@
+{
+  "dataset_path": "/home/snigdha/reverse_tune/slmgen/libslmgen/data/test_dataset.jsonl",
+  "results": [
+    {
+      "step": "Data Ingestion",
+      "status": "PASS",
+      "details": {
+        "total_examples": 58,
+        "total_tokens": 2545,
+        "avg_tokens_per_example": 43,
+        "single_turn_pct": 94,
+        "multi_turn_pct": 6,
+        "has_system_prompts": true
+      },
+      "errors": []
+    },
+    {
+      "step": "Quality Scoring",
+      "status": "PASS",
+      "details": {
+        "quality_score": 0.7,
+        "score_percentage": "70.0%",
+        "issues": [
+          "\ud83d\udc4d Dataset is good, with some minor issues",
+          "\u26a0\ufe0f Small dataset - 100+ examples recommended",
+          "\u26a0\ufe0f Many very short responses (10)"
+        ]
+      },
+      "errors": []
+    },
+    {
+      "step": "Dataset Analysis",
+      "status": "PASS",
+      "details": {
+        "is_multilingual": false,
+        "avg_response_length": 121,
+        "looks_like_json": false,
+        "is_multi_turn": false,
+        "has_system_prompts": true,
+        "dominant_language": "en"
+      },
+      "errors": []
+    },
+    {
+      "step": "Model Recommendation",
+      "status": "PASS",
+      "details": {
+        "primary_model": "Llama 3.2 3B",
+        "primary_model_id": "meta-llama/Llama-3.2-3B-Instruct",
+        "primary_score": 85.0,
+        "primary_reasons": [
+          "\u2705 Excellent for qa tasks",
+          "\u2705 Great for cloud deployment",
+          "\ud83d\udcaa Q&A",
+          "\ud83d\udcaa Conversations"
+        ],
+        "num_alternatives": 3,
+        "is_gated": true,
+        "context_window": 8192
+      },
+      "errors": []
+    },
+    {
+      "step": "Notebook Generation",
+      "status": "PASS",
+      "details": {
+        "valid_json": true,
+        "has_cells": true,
+        "has_metadata": true,
+        "total_cells": 24,
+        "markdown_cells": 13,
+        "code_cells": 11,
+        "notebook_size_bytes": 34960
+      },
+      "errors": []
+    }
+  ],
+  "passed": 5,
+  "total": 5,
+  "overall": "PASS"
+}

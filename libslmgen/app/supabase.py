@@ -47,21 +47,18 @@ def get_supabase_service_key() -> str:
 
 
 @lru_cache()
-def get_jwt_secret() -> bytes:
-    """Get Supabase JWT secret for token verification (base64 decoded)."""
-    import base64
+def get_jwt_secret() -> str:
+    """
+    Get Supabase JWT secret for token verification.
+    
+    Note: Supabase JWT secrets are raw strings used directly with HS256.
+    They should NOT be base64 decoded.
+    """
     secret = os.environ.get("SUPABASE_JWT_SECRET")
     if not secret:
         raise ValueError("SUPABASE_JWT_SECRET environment variable is required")
-    # Supabase JWT secrets are base64 encoded
-    try:
-        decoded = base64.b64decode(secret)
-        logger.info(f"JWT secret decoded: {len(decoded)} bytes")
-        return decoded
-    except Exception:
-        # If not base64, use as-is
-        logger.warning("JWT secret is not base64 encoded, using raw value")
-        return secret.encode()
+    logger.info(f"JWT secret loaded: {len(secret)} chars")
+    return secret
 
 
 def get_supabase_client() -> Client:
