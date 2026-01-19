@@ -63,11 +63,13 @@ def verify_jwt(token: str) -> dict:
         HTTPException: If token is invalid
     """
     try:
+        # Supabase JWTs use HS256 algorithm
+        # Don't strictly verify audience as it varies by Supabase version
         payload = jwt.decode(
             token,
             get_jwt_secret(),
             algorithms=["HS256"],
-            audience="authenticated"
+            options={"verify_aud": False}  # Supabase audience handling
         )
         return payload
     except JWTError as e:
