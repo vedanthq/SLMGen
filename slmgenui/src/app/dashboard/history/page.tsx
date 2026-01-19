@@ -41,7 +41,7 @@ interface Job {
 }
 
 export default function HistoryPage() {
-    const { user, session } = useAuth()
+    const { session } = useAuth()
     const [jobs, setJobs] = useState<Job[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -52,6 +52,7 @@ export default function HistoryPage() {
         if (session) {
             fetchJobs()
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [session])
 
     const fetchJobs = async () => {

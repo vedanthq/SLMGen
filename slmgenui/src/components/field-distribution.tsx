@@ -16,7 +16,6 @@ import {
     Loader2,
     MessageSquare,
     Users,
-    Bot,
     Settings,
     AlertTriangle,
     Check
@@ -42,6 +41,7 @@ export function FieldDistribution({ sessionId, apiUrl = process.env.NEXT_PUBLIC_
 
     useEffect(() => {
         fetchDistribution()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sessionId])
 
     const fetchDistribution = async () => {

@@ -53,6 +53,7 @@ export function DatasetPreview({ sessionId, apiUrl = process.env.NEXT_PUBLIC_API
 
     useEffect(() => {
         fetchPreview()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, sessionId])
 
     const fetchPreview = async () => {

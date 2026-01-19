@@ -13,9 +13,7 @@
 import { useState } from 'react'
 import {
     Download,
-    ExternalLink,
-    Check,
-    ChevronRight
+    Check
 } from '@/components/icons'
 
 interface ExportOption {
@@ -99,8 +97,8 @@ export function ExportOptions({ onExport, isExporting }: ExportOptionsProps) {
                                 setShowConfig(option.id === 'huggingface')
                             }}
                             className={`p-4 rounded-xl border text-left transition-all ${isSelected
-                                    ? 'bg-[#8ccf7e]/10 border-[#8ccf7e]'
-                                    : 'bg-[#1e2528] border-[#2d3437] hover:border-[#8ccf7e]/50'
+                                ? 'bg-[#8ccf7e]/10 border-[#8ccf7e]'
+                                : 'bg-[#1e2528] border-[#2d3437] hover:border-[#8ccf7e]/50'
                                 }`}
                         >
                             <span className="text-2xl mb-2 block">{option.icon}</span>

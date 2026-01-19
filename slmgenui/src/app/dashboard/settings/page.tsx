@@ -11,6 +11,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { useAuth } from '@/contexts/auth-context'
 import { User, Check, Loader2, Camera } from '@/components/icons'
 
@@ -72,7 +73,7 @@ export default function ProfileSettingsPage() {
                         <div className="relative">
                             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#8ccf7e] to-[#6cbfbf] flex items-center justify-center text-[#141b1e] font-bold text-3xl overflow-hidden">
                                 {avatarUrl ? (
-                                    <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                                    <Image src={avatarUrl} alt="Avatar" fill className="object-cover" unoptimized />
                                 ) : (
                                     fullName?.[0]?.toUpperCase() || profile?.email?.[0]?.toUpperCase() || '?'
                                 )}

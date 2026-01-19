@@ -11,7 +11,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Shield, Check, AlertTriangle } from '@/components/icons'
+import { Shield } from '@/components/icons'
 
 interface Confidence {
     score: number

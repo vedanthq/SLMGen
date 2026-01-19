@@ -15,7 +15,6 @@ import {
     Star,
     Cpu,
     Clock,
-    Database,
     Target,
     ChevronRight,
     Check,
@@ -75,8 +74,8 @@ export function ModelComparison({ models, selectedId, onSelect }: ModelCompariso
                         <div
                             key={model.id}
                             className={`relative bg-[#1e2528] border rounded-xl overflow-hidden transition-all ${isSelected
-                                    ? 'border-[#8ccf7e] ring-1 ring-[#8ccf7e]/30'
-                                    : 'border-[#2d3437] hover:border-[#8ccf7e]/50'
+                                ? 'border-[#8ccf7e] ring-1 ring-[#8ccf7e]/30'
+                                : 'border-[#2d3437] hover:border-[#8ccf7e]/50'
                                 }`}
                         >
                             {/* Best Match Badge */}
@@ -153,8 +152,8 @@ export function ModelComparison({ models, selectedId, onSelect }: ModelCompariso
                             <button
                                 onClick={() => onSelect(model.id)}
                                 className={`w-full py-3 text-sm font-medium transition-colors ${isSelected
-                                        ? 'bg-[#8ccf7e] text-[#141b1e]'
-                                        : 'bg-[#141b1e] text-[#dadada] hover:bg-[#8ccf7e]/10 hover:text-[#8ccf7e]'
+                                    ? 'bg-[#8ccf7e] text-[#141b1e]'
+                                    : 'bg-[#141b1e] text-[#dadada] hover:bg-[#8ccf7e]/10 hover:text-[#8ccf7e]'
                                     }`}
                             >
                                 {isSelected ? 'Selected' : 'Select Model'}
