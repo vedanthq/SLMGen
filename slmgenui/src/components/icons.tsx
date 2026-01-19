@@ -23,6 +23,7 @@ export {
     Download,
     Upload,
     RefreshCw,
+    Home,
 } from 'lucide-react';
 
 // Content & Data

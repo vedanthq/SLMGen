@@ -12,8 +12,8 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import Link from 'next/link';
 import { useSession } from '@/hooks/use-session';
+import { DashboardHeader } from '@/components/navigation';
 import { UploadZone } from '@/components/upload-zone';
 import { StatsDisplay } from '@/components/stats-display';
 import { TaskSelector } from '@/components/task-selector';
@@ -109,24 +109,7 @@ export default function DashboardPage() {
     return (
         <div className="min-h-screen bg-[#141b1e]">
             {/* Header */}
-            <header className="border-b border-[#2d3437]">
-                <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-2">
-                        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#8ccf7e] to-[#6cbfbf] flex items-center justify-center">
-                            <Rocket className="w-5 h-5 text-[#141b1e]" />
-                        </div>
-                        <span className="text-xl font-bold text-[#dadada]">SLMGEN</span>
-                    </Link>
-                    <div className="flex items-center gap-4">
-                        <Link href="/dashboard/history" className="text-sm text-[#8a9899] hover:text-[#dadada] transition-colors">
-                            History
-                        </Link>
-                        <Link href="/dashboard/settings" className="text-sm text-[#8a9899] hover:text-[#dadada] transition-colors">
-                            Settings
-                        </Link>
-                    </div>
-                </div>
-            </header>
+            <DashboardHeader />
 
             {/* Progress Bar */}
             <div className="border-b border-[#2d3437] bg-[#1e2528]/50">

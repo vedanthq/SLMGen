@@ -10,6 +10,7 @@
  */
 
 import Link from 'next/link';
+import { Navbar, Footer } from '@/components/navigation';
 import {
   Rocket,
   ArrowRight,
@@ -17,8 +18,6 @@ import {
   Settings,
   Target,
   Zap,
-  Github,
-  Mail,
   Diamond,
   Sparkles,
   Star,
@@ -60,54 +59,8 @@ const STEPS = [
 export default function HomePage() {
   return (
     <div className="min-h-screen hero-gradient">
-      {/* Header */}
-      <header className="container mx-auto px-4 py-6">
-        <nav className="flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            {/* Logo */}
-            <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#8ccf7e] to-[#6cbfbf] flex items-center justify-center">
-                <Rocket className="w-5 h-5 text-[#141b1e]" />
-              </div>
-              <span className="text-xl font-bold text-[#dadada] tracking-wide">SLMGEN</span>
-            </div>
-
-            {/* Navigation Menu */}
-            <div className="hidden md:flex items-center gap-6">
-              <a href="#features" className="text-[#8a9899] hover:text-[#dadada] transition-colors text-sm font-medium">
-                Features
-              </a>
-              <a href="#models" className="text-[#8a9899] hover:text-[#dadada] transition-colors text-sm font-medium">
-                Models
-              </a>
-              <a href="#how-it-works" className="text-[#8a9899] hover:text-[#dadada] transition-colors text-sm font-medium">
-                How It Works
-              </a>
-              <Link href="/about" className="text-[#8a9899] hover:text-[#dadada] transition-colors text-sm font-medium">
-                About
-              </Link>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <a
-              href="https://github.com/eshanized/slmgen"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-[#8a9899] hover:text-[#dadada] transition-colors"
-            >
-              <Github className="w-5 h-5" />
-              <span className="hidden sm:inline">GitHub</span>
-            </a>
-            <Link
-              href="/dashboard"
-              className="px-5 py-2.5 bg-gradient-to-r from-[#8ccf7e] to-[#6cbfbf] text-[#141b1e] rounded-lg font-semibold hover:shadow-lg hover:shadow-[#8ccf7e]/30 transition-all hover:-translate-y-0.5"
-            >
-              Get Started
-            </Link>
-          </div>
-        </nav>
-      </header>
+      {/* Navigation */}
+      <Navbar />
 
       {/* Hero Section */}
       <main className="container mx-auto px-4 py-20">
@@ -235,29 +188,7 @@ export default function HomePage() {
       </main>
 
       {/* Footer */}
-      <footer className="container mx-auto px-4 py-8 mt-20 border-t border-[#2d3437]">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="text-[#8a9899] text-sm">
-            © 2026 Eshan Roy. MIT License.
-          </div>
-          <div className="flex items-center gap-6 text-sm">
-            <Link href="/terms" className="text-[#8a9899] hover:text-[#dadada] transition-colors">
-              Terms
-            </Link>
-            <Link href="/privacy" className="text-[#8a9899] hover:text-[#dadada] transition-colors">
-              Privacy
-            </Link>
-            <a href="https://github.com/eshanized/slmgen" className="flex items-center gap-2 text-[#8a9899] hover:text-[#dadada] transition-colors">
-              <Github className="w-4 h-4" />
-              GitHub
-            </a>
-            <a href="mailto:eshanized@proton.me" className="flex items-center gap-2 text-[#8a9899] hover:text-[#dadada] transition-colors">
-              <Mail className="w-4 h-4" />
-              Contact
-            </a>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

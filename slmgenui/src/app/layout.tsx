@@ -128,7 +128,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         {/* Structured Data */}
         <script
@@ -156,7 +156,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${firaCode.variable} font-sans antialiased`}>
+      <body className={`${firaCode.variable} font-sans antialiased`} suppressHydrationWarning>
         <AuthProvider>
           {children}
         </AuthProvider>
