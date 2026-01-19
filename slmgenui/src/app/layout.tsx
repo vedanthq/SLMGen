@@ -9,19 +9,15 @@
  */
 
 import type { Metadata, Viewport } from 'next';
-import { Sansita } from 'next/font/google';
+import { Sofia_Sans } from 'next/font/google';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { AuthProvider } from '@/contexts/auth-context';
 import './globals.css';
 
 // Primary font for the whole website
-// Note: "Sansation" is not directly available in next/font/google. The closest match on Google Fonts is "Sansita".
-// If you specifically need "Sansation", we would need the font files. 
-// Using Sansita for now as it's the closest Google Font match and supports the requested aesthetic.
-const sansita = Sansita({
+const sofiaSans = Sofia_Sans({
   subsets: ['latin'],
-  weight: ['400', '700', '800', '900'],
-  variable: '--font-sansita',
+  variable: '--font-sofia-sans',
   display: 'swap',
 });
 
@@ -160,7 +156,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${sansita.variable} font-sans antialiased`} suppressHydrationWarning>
+      <body className={`${sofiaSans.variable} antialiased`} suppressHydrationWarning>
         <AuthProvider>
           {children}
         </AuthProvider>
