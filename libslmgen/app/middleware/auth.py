@@ -62,24 +62,13 @@ def verify_jwt(token: str) -> dict:
     Raises:
         HTTPException: If token is invalid
     """
-    import base64
-    
     try:
-        # Supabase JWTs use HS256 algorithm
-        # The JWT secret from Supabase is base64 encoded, so we need to decode it
-        jwt_secret = get_jwt_secret()
-        try:
-            # Try to decode base64 secret
-            decoded_secret = base64.b64decode(jwt_secret)
-        except Exception:
-            # If not base64, use as-is
-            decoded_secret = jwt_secret.encode() if isinstance(jwt_secret, str) else jwt_secret
-        
+        # get_jwt_secret() now returns the decoded bytes directly
         payload = jwt.decode(
             token,
-            decoded_secret,
+            get_jwt_secret(),
             algorithms=["HS256"],
-            options={"verify_aud": False}  # Supabase audience handling
+            options={"verify_aud": False}
         )
         return payload
     except JWTError as e:
