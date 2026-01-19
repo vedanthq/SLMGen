@@ -1,0 +1,8 @@
+[variables]
+# Railway injects PORT automatically
+# Add your Supabase environment variables in Railway dashboard:
+# - SUPABASE_URL
+# - SUPABASE_ANON_KEY
+# - SUPABASE_SERVICE_KEY
+# - SUPABASE_JWT_SECRET
+# - ALLOWED_ORIGINS (set to https://slmgen.vercel.app)
