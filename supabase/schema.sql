@@ -9,6 +9,9 @@ CREATE TABLE IF NOT EXISTS profiles (
   email TEXT NOT NULL,
   full_name TEXT,
   avatar_url TEXT,
+  bio TEXT,
+  notifications_enabled BOOLEAN DEFAULT TRUE,
+  theme TEXT DEFAULT 'dark',
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
