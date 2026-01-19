@@ -1,0 +1,249 @@
+/**
+ * Global styles for SLMGEN.
+ * 
+ * Everblush Theme - Dark aesthetic with vibrant accents
+ * 
+ * @author Eshan Roy <eshanized@proton.me>
+ * @license MIT
+ * @copyright 2026 Eshan Roy
+ */
+
+@import "tailwindcss";
+
+/* Everblush Color Palette */
+:root {
+  /* Base */
+  --background: #141b1e;
+  --surface: #1e2528;
+  --surface-alt: #232a2d;
+  --border: #2d3437;
+
+  /* Text */
+  --foreground: #dadada;
+  --muted: #8a9899;
+
+  /* Accents */
+  --accent-green: #8ccf7e;
+  --accent-yellow: #e5c76b;
+  --accent-red: #e57474;
+  --accent-blue: #67b0e8;
+  --accent-purple: #c47fd5;
+  --accent-teal: #6cbfbf;
+  --accent-orange: #fcb163;
+}
+
+/* Marlboro Class Removed */
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-fira), 'Courier New', monospace;
+}
+
+/* Gradient text utility - Everblush */
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan), var(--accent-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass effect for cards */
+.glass {
+  background: rgba(30, 37, 40, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+/* Glass with glow */
+.glass-glow {
+  background: rgba(30, 37, 40, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  box-shadow: 0 0 40px rgba(140, 207, 126, 0.1);
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-green);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-cyan);
+}
+
+/* Loading pulse animation */
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(140, 207, 126, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 40px rgba(140, 207, 126, 0.6);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Hero gradient background */
+.hero-gradient {
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(140, 207, 126, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(196, 127, 213, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(0, 0, 0, 0) 0%, var(--background) 100%);
+}
+
+/* Animated gradient border */
+@keyframes gradient-rotate {
+  0% {
+    --gradient-angle: 0deg;
+  }
+
+  100% {
+    --gradient-angle: 360deg;
+  }
+}
+
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.gradient-border {
+  position: relative;
+  background: var(--surface);
+  border-radius: 1rem;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: conic-gradient(from var(--gradient-angle),
+      var(--accent-green),
+      var(--accent-cyan),
+      var(--accent-purple),
+      var(--accent-green));
+  z-index: -1;
+  animation: gradient-rotate 4s linear infinite;
+}
+
+/* Button styles */
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+  color: var(--background);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(140, 207, 126, 0.3);
+}
+
+.btn-secondary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent-green);
+  background: var(--surface-alt);
+}
+
+/* Accent text colors */
+.text-accent-green {
+  color: var(--accent-green);
+}
+
+.text-accent-yellow {
+  color: var(--accent-yellow);
+}
+
+.text-accent-red {
+  color: var(--accent-red);
+}
+
+.text-accent-blue {
+  color: var(--accent-blue);
+}
+
+.text-accent-purple {
+  color: var(--accent-purple);
+}
+
+.text-accent-cyan {
+  color: var(--accent-cyan);
+}
+
+.text-muted {
+  color: var(--muted);
+}
+
+/* Background colors */
+.bg-surface {
+  background: var(--surface);
+}
+
+.bg-surface-alt {
+  background: var(--surface-alt);
+}
+
+/* Border color */
+.border-default {
+  border-color: var(--border);
+}
+
+/* Focus ring */
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--accent-green);
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Shimmer loading effect */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg,
+      var(--surface) 25%,
+      var(--surface-alt) 50%,
+      var(--surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
