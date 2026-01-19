@@ -21,13 +21,25 @@ logger = logging.getLogger(__name__)
 
 def _check_multilingual(data: list[dict]) -> tuple[bool, str]:
     """
-    Detect if dataset is Multilingual.
-    We use a simple heuristic: check for non-ASCII characters.
+    Detect if dataset is multilingual using non-ASCII character ratio.
+    
+    FIX: B3 - Documentation of heuristic limitations
+    
+    KNOWN LIMITATIONS:
+    - False positives: Emojis, accented English (café, naïve), special 
+      characters will trigger multilingual detection
+    - False negatives: Romanized languages (pinyin, romaji) will not be 
+      detected as multilingual since they use ASCII
+    - This is a rough heuristic, not a language detection library
+    
+    The 30% threshold was chosen to minimize false positives from 
+    occasional accented characters while catching genuinely 
+    multilingual datasets.
     """
     non_ascii_count = 0
     total_chars = 0
     
-    # Sample a subset if dataset is Large
+    # Sample a subset if dataset is large
     sample = data[:500] if len(data) > 500 else data
     
     for entry in sample:
@@ -36,7 +48,7 @@ def _check_multilingual(data: list[dict]) -> tuple[bool, str]:
             total_chars += len(content)
             non_ascii_count += sum(1 for c in content if ord(c) > 127)
     
-    # If more than 30% non-ASCII, likely Multilingual
+    # If more than 30% non-ASCII, likely multilingual
     ratio = (non_ascii_count / total_chars) if total_chars > 0 else 0
     
     if ratio > 0.3:

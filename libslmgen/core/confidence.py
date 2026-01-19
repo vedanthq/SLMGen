@@ -30,6 +30,21 @@ class DatasetConfidence:
     explanation: str
 
 
+# FIX: B4 - Named weight constants with rationale
+# Coverage (30%): Vocabulary breadth indicates topic range the model will learn.
+#                 Higher weight because poor coverage = model can't generalize.
+# Redundancy (25%): Duplicate examples waste training compute and can cause
+#                   overfitting. Inverted (1 - redundancy) so higher is better.
+# Diversity (25%): Response variation ensures model learns flexible outputs,
+#                  not just one template. Equal to redundancy for balance.
+# Balance (20%): User/assistant ratio matters for turn-taking behavior.
+#                Lower weight because slight imbalance is often acceptable.
+CONFIDENCE_WEIGHT_COVERAGE = 0.3
+CONFIDENCE_WEIGHT_REDUNDANCY = 0.25  # Applied as (1 - redundancy) * weight
+CONFIDENCE_WEIGHT_DIVERSITY = 0.25
+CONFIDENCE_WEIGHT_BALANCE = 0.2
+
+
 def _hash_content(text: str) -> str:
     """Create hash for deduplication."""
     return hashlib.md5(text.lower().strip().encode()).hexdigest()[:16]
@@ -184,13 +199,13 @@ def calculate_confidence(data: list[dict]) -> DatasetConfidence:
     diversity, div_note = _measure_diversity(data)
     balance, bal_note = _measure_balance(data)
     
-    # Calculate overall score
+    # Calculate overall score using documented weight constants
     # Coverage and diversity are positive, redundancy is negative
     score = (
-        coverage * 0.3 +
-        (1 - redundancy) * 0.25 +
-        diversity * 0.25 +
-        balance * 0.2
+        coverage * CONFIDENCE_WEIGHT_COVERAGE +
+        (1 - redundancy) * CONFIDENCE_WEIGHT_REDUNDANCY +
+        diversity * CONFIDENCE_WEIGHT_DIVERSITY +
+        balance * CONFIDENCE_WEIGHT_BALANCE
     )
     
     # Determine level

@@ -13,7 +13,7 @@ might produce fabricated or ungrounded responses.
 import re
 import logging
 from dataclasses import dataclass
-from statistics import stdev, mean
+from statistics import stdev, mean, StatisticsError
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +39,21 @@ class HallucinationRisk:
     level: str  # "low", "medium", "high"
     factors: list[str]  # Contributing risk factors
     recommendation: str  # What user can do about it
+
+
+# FIX: B4 - Named weight constants with rationale
+# Abstraction (30%): Vague language correlates with hallucination tendency.
+#                    Models trained on hedging language hedge more.
+# Grounding (30%): Factual references indicate verifiable content.
+#                  Equal to abstraction as inverse relationship.
+# Variance (20%): Inconsistent response lengths indicate unstable behavior.
+#                 Lower weight as some variance is normal.
+# Overconfidence (20%): Absolute claims without backing increase risk.
+#                       Lower weight as confidence can be appropriate.
+RISK_WEIGHT_ABSTRACTION = 0.3
+RISK_WEIGHT_GROUNDING = 0.3
+RISK_WEIGHT_VARIANCE = 0.2
+RISK_WEIGHT_OVERCONFIDENCE = 0.2
 
 
 def _collect_responses(data: list[dict]) -> list[str]:
@@ -126,7 +141,9 @@ def _measure_length_variance(responses: list[str]) -> tuple[float, str]:
     try:
         std = stdev(lengths)
         coef_of_var = std / avg_len
-    except:
+    except StatisticsError:
+        # FIX: B1 - Replaced bare except with specific exception
+        # StatisticsError raised when stdev has insufficient data
         return 0.5, ""
     
     if coef_of_var > 1.0:
@@ -214,8 +231,13 @@ def estimate_hallucination_risk(data: list[dict]) -> HallucinationRisk:
     if overconf_note:
         factors.append(overconf_note)
     
-    # Calculate overall score (weighted average)
-    overall = (abs_score * 0.3 + ground_score * 0.3 + var_score * 0.2 + overconf_score * 0.2)
+    # Calculate overall score using documented weight constants
+    overall = (
+        abs_score * RISK_WEIGHT_ABSTRACTION + 
+        ground_score * RISK_WEIGHT_GROUNDING + 
+        var_score * RISK_WEIGHT_VARIANCE + 
+        overconf_score * RISK_WEIGHT_OVERCONFIDENCE
+    )
     
     # Determine level
     if overall < 0.35:

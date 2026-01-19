@@ -25,8 +25,16 @@ MIN_EXAMPLES = 50
 
 def _estimate_tokens(text: str) -> int:
     """
-    Rough token estimation - about 4 chars per Token.
-    Not perfect but good enough for our Purposes.
+    Rough token estimation - approximately 4 characters per token.
+    
+    FIX: B2 - Documentation transparency
+    NOTE: This is a heuristic approximation. Actual token counts vary by:
+    - Tokenizer used (GPT, Llama, etc. have different tokenizers)
+    - Language (non-Latin scripts like CJK may have 1-2 chars/token)
+    - Content type (code has different tokenization than prose)
+    
+    For multilingual or code-heavy datasets, actual token counts 
+    may be 2-3x higher than this estimate.
     """
     return max(1, len(text) // 4)
 

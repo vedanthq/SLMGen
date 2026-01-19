@@ -18,42 +18,70 @@ from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
-# LoRA target modules for different model Architectures
+# LoRA target modules for different model architectures
+# Each architecture has specific projection layers that can be fine-tuned.
+# Using incorrect targets will cause training to fail or produce incorrect adapters.
+# FIX: A1 - Added explicit mappings for all supported architectures (Gemma, Llama, Phi, etc.)
 LORA_TARGETS = {
+    # Phi models use fc1/fc2 instead of gate_proj/up_proj/down_proj
     "microsoft/Phi": ["q_proj", "k_proj", "v_proj", "o_proj", "fc1", "fc2"],
-    "default": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+    # Gemma models have simpler attention, no MLP gate/up/down projections exposed for LoRA
+    "google/gemma": ["q_proj", "k_proj", "v_proj", "o_proj"],
+    # Llama/Mistral-style models have the standard MLP projections
+    "meta-llama": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+    "mistralai": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+    "Qwen": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+    "HuggingFaceTB/SmolLM": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+    "TinyLlama": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+    "stabilityai": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+    "deepseek-ai": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
 }
+
+# Default fallback for unknown models - uses most common architecture
+_DEFAULT_LORA_TARGETS = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
 
 
 def _get_lora_targets(model_id: str) -> list[str]:
-    """Get the right LoRA targets for this Model."""
+    """
+    Get the correct LoRA target modules for a given model.
+    
+    Different model architectures have different layer names for attention
+    and MLP components. Using wrong targets causes training failure.
+    """
     for prefix, targets in LORA_TARGETS.items():
         if model_id.startswith(prefix):
             return targets
-    return LORA_TARGETS["default"]
+    return _DEFAULT_LORA_TARGETS
 
 
-def _is_gated_model(model_id: str) -> bool:
-    """Check if model requires HuggingFace Login."""
-    gated_patterns = ["meta-llama", "google/gemma"]
-    return any(p in model_id for p in gated_patterns)
+# FIX: A2 - Removed _is_gated_model function.
+# Gated model detection is now passed explicitly from recommender.MODELS
+# to avoid duplication and ensure consistency.
 
 
 def _estimate_training_time(model_size: str, num_examples: int) -> int:
-    """Estimate training time in minutes on T4 GPU."""
+    """
+    Estimate training time in minutes on T4 GPU.
+    
+    FIX: Now accepts model_size directly from ModelSpec instead of parsing names.
+    """
     base_times = {
+        "1B": 5,
+        "1.1B": 5,
+        "1.3B": 6,
+        "1.7B": 7,
         "2B": 8,
         "3B": 12,
         "3.8B": 15,
         "7B": 25,
     }
-    # Get base time or Default to 15
+    # Get base time or default to 15 for unknown sizes
     base = base_times.get(model_size, 15)
     
-    # Scale by dataset Size
+    # Scale by dataset size (100 examples = 1x scale)
     scale = num_examples / 100
     
-    # 3 epochs
+    # 3 epochs by default
     return int(base * scale * 3)
 
 
@@ -87,8 +115,10 @@ def generate_notebook(
     dataset_jsonl: str,
     model_id: str,
     model_name: str,
+    model_size: str,
     task_type: str,
     num_examples: int,
+    is_gated: bool,
 ) -> str:
     """
     Generate a complete Jupyter notebook for fine-tuning.
@@ -113,10 +143,10 @@ def generate_notebook(
     # Encode dataset as Base64
     dataset_b64 = base64.b64encode(dataset_jsonl.encode()).decode()
     
-    # Get model-specific Config
+    # Get model-specific config
+    # FIX: A2 - is_gated now passed from caller (recommender) instead of re-detecting
     lora_targets = _get_lora_targets(model_id)
-    is_gated = _is_gated_model(model_id)
-    training_time = _estimate_training_time(model_name.split()[-1] if " " in model_name else "3B", num_examples)
+    training_time = _estimate_training_time(model_size, num_examples)
     
     # Build notebook Cells
     cells = []

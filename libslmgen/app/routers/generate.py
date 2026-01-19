@@ -24,12 +24,17 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-def _get_model_info(model_id: str) -> tuple[str, str]:
-    """Get model name and task type for notebook Title."""
+def _get_model_info(model_id: str) -> tuple[str, str, bool]:
+    """
+    Get model name, size, and gated status for notebook generation.
+    
+    FIX: A2 - Now returns is_gated from MODELS instead of re-detecting.
+    """
     for key, spec in MODELS.items():
         if spec.model_id == model_id:
-            return spec.name, "fine-tuning"
-    return model_id.split("/")[-1], "fine-tuning"
+            return spec.name, spec.size, spec.is_gated
+    # Fallback for unknown models
+    return model_id.split("/")[-1], "3B", False
 
 
 @router.post("/generate-notebook", response_model=NotebookResponse)
@@ -62,7 +67,7 @@ async def generate_training_notebook(request: GenerateRequest):
         )
     
     # Get Model info
-    model_name, _ = _get_model_info(model_id)
+    model_name, model_size, is_gated = _get_model_info(model_id)
     
     # Load the dataset Content
     if not session.file_path or not Path(session.file_path).exists():
@@ -83,8 +88,10 @@ async def generate_training_notebook(request: GenerateRequest):
             dataset_jsonl=dataset_content,
             model_id=model_id,
             model_name=model_name,
+            model_size=model_size,
             task_type=task_type,
             num_examples=session.stats.total_examples,
+            is_gated=is_gated,
         )
     except Exception as e:
         logger.error(f"Failed to generate notebook: {e}")

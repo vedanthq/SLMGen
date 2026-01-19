@@ -24,6 +24,7 @@ from .prompt_linter import lint_prompt
 from .failure_preview import generate_failure_previews
 from .model_card import generate_model_card
 from .prompt_diff import compare_prompts
+from .reverse_prompt import infer_reverse_prompt  # FIX: C1 - Added missing module
 
 __all__ = [
     # Core
@@ -42,4 +43,5 @@ __all__ = [
     "generate_failure_previews",
     "generate_model_card",
     "compare_prompts",
+    "infer_reverse_prompt",  # FIX: C1 - Added missing module
 ]
