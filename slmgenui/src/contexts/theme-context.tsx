@@ -10,7 +10,7 @@
 
 'use client'
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, useLayoutEffect, ReactNode } from 'react'
 
 type Theme = 'dark' | 'light' | 'system'
 
@@ -26,10 +26,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const [theme, setThemeState] = useState<Theme>('dark')
     const [resolvedTheme, setResolvedTheme] = useState<'dark' | 'light'>('dark')
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         // Load from localStorage
         const stored = localStorage.getItem('slmgen-theme') as Theme | null
-        if (stored) {
+        if (stored && stored !== theme) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setThemeState(stored)
         }
     }, [])

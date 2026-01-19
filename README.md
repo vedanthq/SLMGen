@@ -1,5 +1,8 @@
 # 🚀 SLMGEN - Small Language Model Generator
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-teal.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/eshanized/slmgen/actions/workflows/ci.yml/badge.svg)](https://github.com/eshanized/slmgen/actions/workflows/ci.yml)
+
 <div align="center">
 
 ![SLMGEN Landing Page](docs/images/screenshot.png)

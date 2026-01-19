@@ -34,10 +34,11 @@ export default function SignupPage() {
         if (isLoading) {
             const timer = setTimeout(() => setShowSlowMessage(true), 3000)
             return () => clearTimeout(timer)
-        } else {
-            setShowSlowMessage(false)
+        } else if (showSlowMessage) {
+            const timer = setTimeout(() => setShowSlowMessage(false), 0)
+            return () => clearTimeout(timer)
         }
-    }, [isLoading])
+    }, [isLoading, showSlowMessage])
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault()

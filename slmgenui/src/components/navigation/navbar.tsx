@@ -56,9 +56,9 @@ export function Navbar() {
     return (
         <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#141b1e]/80 border-b border-[#2d3437]">
             <div className="container mx-auto px-4">
-                <nav className="flex items-center justify-between h-16">
+                <nav className="flex items-center justify-between h-20">
                     {/* Logo */}
-                    <Link href="/" className="flex items-center gap-2 group">
+                    <Link href="/" className="flex items-center gap-2 group mr-8">
                         <div className="relative w-9 h-9">
                             <Image
                                 src="/logo.svg"
@@ -70,40 +70,43 @@ export function Navbar() {
                         <span className="text-xl font-bold text-[#dadada] tracking-wide">SLMGEN</span>
                     </Link>
 
-                    {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center gap-1">
+                    {/* Desktop Navigation - Centered Pill Design */}
+                    <div className="hidden md:flex items-center gap-2">
                         {NAV_ITEMS.map((item) => (
                             <Link
                                 key={item.label}
                                 href={item.href}
                                 className={`
-                                    flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
+                                    flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border border-transparent
                                     ${isActive(item.href)
-                                        ? 'bg-[#8ccf7e]/10 text-[#8ccf7e]'
-                                        : 'text-[#8a9899] hover:text-[#dadada] hover:bg-[#1e2528]'
+                                        ? 'bg-[#1e2528] text-[#8ccf7e] border-[#2d3437]'
+                                        : 'text-[#8a9899] hover:text-[#dadada] hover:bg-[#1e2528]/50 hover:border-[#2d3437]/50'
                                     }
                                 `}
                             >
-                                <item.icon className="w-4 h-4" />
+                                <item.icon className={`w-4 h-4 ${isActive(item.href) ? 'text-[#8ccf7e]' : 'text-[#8a9899] group-hover:text-[#dadada]'}`} />
                                 {item.label}
                             </Link>
                         ))}
                     </div>
 
                     {/* Right Side Actions */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 ml-auto">
                         <a
                             href="https://github.com/eshanized/slmgen"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-3 py-2 text-[#8a9899] hover:text-[#dadada] hover:bg-[#1e2528] rounded-lg transition-all"
+                            className="hidden md:flex items-center gap-2 px-4 py-2.5 text-[#8a9899] hover:text-[#dadada] hover:bg-[#1e2528] border border-transparent hover:border-[#2d3437] rounded-xl transition-all text-sm font-medium"
                         >
-                            <Github className="w-5 h-5" />
-                            <span className="hidden sm:inline text-sm">GitHub</span>
+                            <Github className="w-4 h-4" />
+                            <span>GitHub</span>
                         </a>
+
+                        <div className="w-px h-8 bg-[#2d3437] hidden md:block mx-1" />
+
                         <Link
                             href="/dashboard"
-                            className="px-5 py-2.5 bg-gradient-to-r from-[#8ccf7e] to-[#6cbfbf] text-[#141b1e] rounded-lg font-semibold hover:shadow-lg hover:shadow-[#8ccf7e]/30 transition-all hover:-translate-y-0.5 text-sm"
+                            className="px-5 py-2.5 bg-gradient-to-r from-[#8ccf7e] to-[#6cbfbf] text-[#141b1e] rounded-xl font-bold hover:shadow-lg hover:shadow-[#8ccf7e]/20 transition-all hover:-translate-y-0.5 text-sm"
                         >
                             Get Started
                         </Link>
@@ -111,7 +114,7 @@ export function Navbar() {
                         {/* Mobile Menu Button */}
                         <button
                             onClick={() => setIsOpen(!isOpen)}
-                            className="md:hidden p-2 text-[#8a9899] hover:text-[#dadada] hover:bg-[#1e2528] rounded-lg transition-colors"
+                            className="md:hidden p-2 text-[#8a9899] hover:text-[#dadada] hover:bg-[#1e2528] rounded-xl transition-colors border border-transparent hover:border-[#2d3437]"
                             aria-label={isOpen ? 'Close menu' : 'Open menu'}
                         >
                             {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -122,16 +125,16 @@ export function Navbar() {
                 {/* Mobile Navigation */}
                 {isOpen && (
                     <div className="md:hidden pb-4 animate-in slide-in-from-top-2 duration-200">
-                        <div className="flex flex-col gap-1 bg-[#1e2528] rounded-xl p-2 border border-[#2d3437]">
+                        <div className="flex flex-col gap-1 bg-[#1e2528] rounded-2xl p-2 border border-[#2d3437] shadow-xl">
                             {NAV_ITEMS.map((item) => (
                                 <Link
                                     key={item.label}
                                     href={item.href}
                                     onClick={() => setIsOpen(false)}
                                     className={`
-                                        flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
+                                        flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all
                                         ${isActive(item.href)
-                                            ? 'bg-[#8ccf7e]/10 text-[#8ccf7e]'
+                                            ? 'bg-[#2d3437] text-[#8ccf7e]'
                                             : 'text-[#8a9899] hover:text-[#dadada] hover:bg-[#232a2d]'
                                         }
                                     `}
@@ -145,7 +148,7 @@ export function Navbar() {
                                 href="https://github.com/eshanized/slmgen"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-[#8a9899] hover:text-[#dadada] hover:bg-[#232a2d] transition-all"
+                                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-[#8a9899] hover:text-[#dadada] hover:bg-[#232a2d] transition-all"
                             >
                                 <Github className="w-5 h-5" />
                                 GitHub

@@ -54,16 +54,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     // Initialize Supabase client on mount (client-side only)
     useEffect(() => {
+        if (supabase) return
+
         try {
             const client = createClient()
-            setSupabase(client)
-            setIsConfigured(true)
+            setTimeout(() => {
+                setSupabase(client)
+                setIsConfigured(true)
+            }, 0)
         } catch (e) {
             console.warn('Supabase not configured:', e)
-            setLoading(false)
-            setIsConfigured(false)
+            setTimeout(() => {
+                setLoading(false)
+                setIsConfigured(false)
+            }, 0)
         }
-    }, [])
+    }, [supabase])
 
     // Fetch user profile
     const fetchProfile = useCallback(async (userId: string, client: SupabaseClient) => {

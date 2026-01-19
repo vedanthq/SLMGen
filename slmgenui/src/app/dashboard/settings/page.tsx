@@ -25,8 +25,11 @@ export default function ProfileSettingsPage() {
 
     useEffect(() => {
         if (profile) {
-            setFullName(profile.full_name || '')
-            setAvatarUrl(profile.avatar_url || '')
+            const t = setTimeout(() => {
+                setFullName(profile.full_name || '')
+                setAvatarUrl(profile.avatar_url || '')
+            }, 0)
+            return () => clearTimeout(t)
         }
     }, [profile])
 

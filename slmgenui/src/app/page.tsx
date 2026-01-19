@@ -72,7 +72,7 @@ export default function HomePage() {
           </div>
 
           {/* Headline */}
-          <h1 className="text-5xl md:text-7xl font-bold text-[#dadada] mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-[#dadada] mb-6 leading-tight">
             Your Data.<br />
             <span className="gradient-text">Best Model. Matched.</span>
           </h1>
@@ -102,7 +102,7 @@ export default function HomePage() {
         </div>
 
         {/* Stats / Features */}
-        <div id="features" className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20 max-w-4xl mx-auto">
+        <div id="features" className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-20 max-w-4xl mx-auto">
           {STATS.map((stat) => (
             <div key={stat.label} className="text-center p-6 rounded-xl glass">
               <div className="text-4xl font-bold gradient-text">{stat.value}</div>
