@@ -4,7 +4,7 @@
 SLMGEN FastAPI Application.
 
 Main entry point for the backend API.
-Handles CORS, routing, and lifecycle events.
+Handles CORS, routing, rate limiting, and lifecycle events.
 """
 # Author: Eshan Roy <eshanized@proton.me>
 # License: MIT License
@@ -18,9 +18,12 @@ import logging  # noqa: E402
 from contextlib import asynccontextmanager  # noqa: E402
 from fastapi import FastAPI  # noqa: E402
 from fastapi.middleware.cors import CORSMiddleware  # noqa: E402
+from slowapi import _rate_limit_exceeded_handler  # noqa: E402
+from slowapi.errors import RateLimitExceeded  # noqa: E402
 
 from app.config import settings  # noqa: E402
 from app.session import session_manager  # noqa: E402
+from app.middleware.rate_limit import limiter, rate_limit_exceeded_handler  # noqa: E402
 from app.routers import upload, analyze, recommend, generate, jobs, preview, advanced  # noqa: E402
 
 # Setup Logging
@@ -38,6 +41,7 @@ async def lifespan(app: FastAPI):
     logger.info("🚀 SLMGEN Backend starting up...")
     logger.info(f"📁 Upload directory: {settings.upload_dir}")
     logger.info(f"🌐 Allowed origins: {settings.allowed_origins}")
+    logger.info(f"🔒 Rate limit: {settings.rate_limit_per_minute}/min, Upload: {settings.upload_rate_limit_per_minute}/min")
     yield
     # Shutdown
     logger.info("👋 SLMGEN Backend shutting down...")
@@ -51,14 +55,24 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Configure CORS
+# Add rate limiter state
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
+
+# Configure CORS with restricted methods and headers
 origins = [origin.strip() for origin in settings.allowed_origins.split(",")]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=[
+        "Authorization",
+        "Content-Type",
+        "Accept",
+        "Origin",
+        "X-Requested-With",
+    ],
 )
 
 # Include Routers

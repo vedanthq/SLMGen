@@ -12,11 +12,12 @@ Handles file uploads and initial dataset processing.
 import logging
 import aiofiles
 from pathlib import Path
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 
 from app.config import settings
 from app.session import session_manager
 from app.models import UploadResponse
+from app.middleware.auth import get_optional_user, AuthenticatedUser, AnonymousUser
 from core import ingest_data, validate_quality
 
 logger = logging.getLogger(__name__)
@@ -24,12 +25,17 @@ router = APIRouter()
 
 
 @router.post("/upload", response_model=UploadResponse)
-async def upload_dataset(file: UploadFile = File(...)):
+async def upload_dataset(
+    file: UploadFile = File(...),
+    user: AuthenticatedUser | AnonymousUser = Depends(get_optional_user)
+):
     """
     Upload a JSONL dataset for fine-tuning.
     
     The file should contain one JSON object per line with a "messages" array.
     Minimum 50 examples required.
+    
+    Authentication is optional - authenticated users get ownership tracking.
     """
     # Check file Extension
     if not file.filename or not file.filename.lower().endswith(".jsonl"):
@@ -38,18 +44,34 @@ async def upload_dataset(file: UploadFile = File(...)):
             detail="Please upload a .jsonl file"
         )
     
-    # Create session First
-    session = session_manager.create()
+    # Get owner ID if authenticated
+    owner_id = user.id if user.is_authenticated else None
     
-    # Save file to disk
+    # Create session with owner
+    session = session_manager.create(owner_id=owner_id)
+    
+    # Save file to disk with size limit
     file_path = Path(settings.upload_dir) / f"{session.id}.jsonl"
+    total_size = 0
     
     try:
         async with aiofiles.open(file_path, "wb") as f:
-            content = await file.read()
-            await f.write(content)
+            # Stream file with size checking
+            while chunk := await file.read(1024 * 1024):  # 1MB chunks
+                total_size += len(chunk)
+                if total_size > settings.max_upload_bytes:
+                    await f.close()
+                    file_path.unlink(missing_ok=True)
+                    session_manager.delete(session.id)
+                    raise HTTPException(
+                        status_code=413,
+                        detail=f"File too large. Maximum size is {settings.max_upload_bytes // (1024*1024)}MB"
+                    )
+                await f.write(chunk)
         
-        logger.info(f"Saved upload to {file_path}")
+        logger.info(f"Saved upload to {file_path} ({total_size} bytes)")
+    except HTTPException:
+        raise
     except Exception as e:
         session_manager.delete(session.id)
         logger.error(f"Failed to save file: {e}")
@@ -76,7 +98,7 @@ async def upload_dataset(file: UploadFile = File(...)):
     session.stats = stats
     session_manager.update(session)
     
-    logger.info(f"Upload complete: session={session.id}, examples={stats.total_examples}")
+    logger.info(f"Upload complete: session={session.id}, examples={stats.total_examples}, owner={owner_id}")
     
     return UploadResponse(
         session_id=session.id,

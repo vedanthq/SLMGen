@@ -10,10 +10,11 @@ Returns model recommendations based on task and deployment target.
 # Copyright (c) 2026 Eshan Roy
 
 import logging
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
 from app.session import session_manager
 from app.models import RecommendRequest, RecommendationResponse
+from app.middleware.auth import get_optional_user, AuthenticatedUser, AnonymousUser
 from core import analyze_dataset, get_recommendations, ingest_data
 
 logger = logging.getLogger(__name__)
@@ -21,18 +22,24 @@ router = APIRouter()
 
 
 @router.post("/recommend", response_model=RecommendationResponse)
-async def get_model_recommendation(request: RecommendRequest):
+async def get_model_recommendation(
+    request: RecommendRequest,
+    user: AuthenticatedUser | AnonymousUser = Depends(get_optional_user)
+):
     """
     Get model recommendations based on task, deployment, and dataset.
     
     Returns a primary recommendation and alternatives with scores.
+    
+    Respects session ownership if authenticated.
     """
-    session = session_manager.get(request.session_id)
+    user_id = user.id if user.is_authenticated else None
+    session = session_manager.get_with_owner(request.session_id, user_id)
     
     if session is None:
         raise HTTPException(
             status_code=404,
-            detail="Session not found or expired. Please upload again."
+            detail="Session not found, expired, or access denied. Please upload again."
         )
     
     if session.stats is None:

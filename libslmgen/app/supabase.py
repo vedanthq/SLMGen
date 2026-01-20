@@ -57,7 +57,6 @@ def get_jwt_secret() -> str:
     secret = os.environ.get("SUPABASE_JWT_SECRET")
     if not secret:
         raise ValueError("SUPABASE_JWT_SECRET environment variable is required")
-    logger.debug(f"JWT secret loaded: {len(secret)} chars")
     return secret
 
 

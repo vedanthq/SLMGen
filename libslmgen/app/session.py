@@ -30,6 +30,13 @@ class Session:
     created_at: datetime
     expires_at: datetime
     
+    # Owner tracking (None = anonymous session)
+    owner_id: Optional[str] = None
+    
+    # Secure download token (regenerated on notebook creation)
+    download_token: Optional[str] = None
+    download_token_expires: Optional[datetime] = None
+    
     # File info
     file_path: str = ""
     original_filename: str = ""
@@ -109,8 +116,8 @@ class SessionManager:
                 except Exception:
                     pass  # best effort
     
-    def create(self) -> Session:
-        """Create a new Session."""
+    def create(self, owner_id: Optional[str] = None) -> Session:
+        """Create a new Session, optionally linked to a user."""
         with self._lock:
             # Housekeeping first
             self._cleanup_expired()
@@ -124,10 +131,11 @@ class SessionManager:
                 id=session_id,
                 created_at=now,
                 expires_at=expires,
+                owner_id=owner_id,
             )
             
             self._sessions[session_id] = session
-            logger.info(f"Created new session: {session_id}")
+            logger.info(f"Created new session: {session_id} (owner: {owner_id or 'anonymous'})")
             
             return session
     
@@ -148,6 +156,66 @@ class SessionManager:
             # Refresh expiry on Access
             session.refresh()
             return session
+    
+    def get_with_owner(self, session_id: str, user_id: Optional[str]) -> Optional[Session]:
+        """
+        Get session only if user has access.
+        
+        Access is granted if:
+        - Session has no owner (anonymous)
+        - Session owner matches user_id
+        - user_id is None and session is anonymous
+        """
+        session = self.get(session_id)
+        if session is None:
+            return None
+        
+        # Anonymous sessions can be accessed by anyone
+        if session.owner_id is None:
+            return session
+        
+        # Owned sessions require matching user
+        if session.owner_id == user_id:
+            return session
+        
+        logger.warning(f"Session {session_id} access denied for user {user_id}")
+        return None
+    
+    def generate_download_token(self, session_id: str) -> Optional[str]:
+        """Generate a secure download token for the session."""
+        with self._lock:
+            session = self._sessions.get(session_id)
+            if session is None:
+                return None
+            
+            import secrets
+            token = secrets.token_urlsafe(32)
+            session.download_token = token
+            session.download_token_expires = (
+                datetime.now(timezone.utc) + 
+                timedelta(minutes=settings.download_token_ttl_minutes)
+            )
+            
+            logger.info(f"Generated download token for session {session_id}")
+            return token
+    
+    def validate_download_token(self, session_id: str, token: str) -> bool:
+        """Validate a download token for a session."""
+        with self._lock:
+            session = self._sessions.get(session_id)
+            if session is None:
+                return False
+            
+            if session.download_token != token:
+                return False
+            
+            if session.download_token_expires is None:
+                return False
+            
+            if datetime.now(timezone.utc) > session.download_token_expires:
+                return False
+            
+            return True
     
     def update(self, session: Session) -> None:
         """Update session in Store."""

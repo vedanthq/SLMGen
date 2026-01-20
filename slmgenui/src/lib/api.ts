@@ -31,45 +31,80 @@ export class ApiError extends Error {
 }
 
 /**
- * Helper to make API Requests.
+ * Delay for a specified number of milliseconds.
+ */
+function delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Helper to make API Requests with retry logic.
+ * Uses exponential backoff for transient failures.
  */
 async function apiRequest<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    retries: number = 3
 ): Promise<T> {
     const url = `${API_URL}${endpoint}`;
+    let lastError: Error | null = null;
 
-    try {
-        const response = await fetch(url, {
-            ...options,
-            headers: {
-                'Accept': 'application/json',
-                ...options.headers,
-            },
-        });
+    for (let attempt = 0; attempt < retries; attempt++) {
+        try {
+            const response = await fetch(url, {
+                ...options,
+                headers: {
+                    'Accept': 'application/json',
+                    ...options.headers,
+                },
+            });
 
-        if (!response.ok) {
-            // Try to get error message from Response
-            let errorMessage = `Request failed with status ${response.status}`;
-            try {
-                const errorData = await response.json();
-                if (errorData.detail) {
-                    errorMessage = errorData.detail;
+            if (!response.ok) {
+                // Try to get error message from Response
+                let errorMessage = `Request failed with status ${response.status}`;
+                try {
+                    const errorData = await response.json();
+                    if (errorData.detail) {
+                        errorMessage = errorData.detail;
+                    }
+                } catch {
+                    // couldn't parse JSON, use default
                 }
-            } catch {
-                // couldn't parse JSON, use default
-            }
-            throw new ApiError(response.status, errorMessage);
-        }
 
-        return response.json();
-    } catch (error) {
-        if (error instanceof ApiError) {
-            throw error;
+                // Don't retry client errors (4xx) except 429 (rate limit)
+                if (response.status >= 400 && response.status < 500 && response.status !== 429) {
+                    throw new ApiError(response.status, errorMessage);
+                }
+
+                // For 5xx errors and 429, retry with backoff
+                lastError = new ApiError(response.status, errorMessage);
+                if (attempt < retries - 1) {
+                    const backoffMs = Math.pow(2, attempt) * 1000; // 1s, 2s, 4s
+                    await delay(backoffMs);
+                    continue;
+                }
+            } else {
+                return response.json();
+            }
+        } catch (error) {
+            if (error instanceof ApiError) {
+                throw error;
+            }
+            // Network error - retry with backoff
+            lastError = error instanceof Error ? error : new Error(String(error));
+            if (attempt < retries - 1) {
+                const backoffMs = Math.pow(2, attempt) * 1000;
+                await delay(backoffMs);
+                continue;
+            }
         }
-        // Network error or something
-        throw new ApiError(0, 'Failed to connect to server. Is the backend running?');
     }
+
+    // All retries exhausted
+    if (lastError instanceof ApiError) {
+        throw lastError;
+    }
+    throw new ApiError(0, 'Failed to connect to server after multiple attempts. Is the backend running?');
 }
 
 /**

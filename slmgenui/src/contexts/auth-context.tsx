@@ -16,6 +16,9 @@ import { User, Session, AuthError, SupabaseClient } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase'
 import type { Profile } from '@/lib/database.types'
 
+// Use explicit app URL from env, fallback to origin
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+
 interface AuthContextType {
     // State
     user: User | null
@@ -181,7 +184,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const { error } = await supabase.auth.signInWithOtp({
             email,
             options: {
-                emailRedirectTo: `${window.location.origin}/auth/callback`
+                emailRedirectTo: `${APP_URL}/auth/callback`
             }
         })
         return { error }
@@ -193,7 +196,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         await supabase.auth.signInWithOAuth({
             provider,
             options: {
-                redirectTo: `${window.location.origin}/auth/callback`
+                redirectTo: `${APP_URL}/auth/callback`
             }
         })
     }, [supabase])
@@ -202,7 +205,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const resetPassword = useCallback(async (email: string) => {
         if (!supabase) return { error: { message: 'Not configured' } as AuthError }
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${window.location.origin}/auth/update-password`
+            redirectTo: `${APP_URL}/auth/update-password`
         })
         return { error }
     }, [supabase])

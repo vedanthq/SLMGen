@@ -10,10 +10,11 @@ Returns detailed dataset characteristics for model selection.
 # Copyright (c) 2026 Eshan Roy
 
 import logging
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
 from app.session import session_manager
 from app.models import AnalyzeRequest, AnalyzeResponse
+from app.middleware.auth import get_optional_user, AuthenticatedUser, AnonymousUser
 from core import analyze_dataset, ingest_data
 
 logger = logging.getLogger(__name__)
@@ -21,19 +22,25 @@ router = APIRouter()
 
 
 @router.post("/analyze", response_model=AnalyzeResponse)
-async def analyze_session(request: AnalyzeRequest):
+async def analyze_session(
+    request: AnalyzeRequest,
+    user: AuthenticatedUser | AnonymousUser = Depends(get_optional_user)
+):
     """
     Analyze an uploaded dataset and return characteristics.
     
     This extracts features like: multilingual, JSON output patterns,
     multi-turn conversations, etc. which help with model selection.
+    
+    Respects session ownership if authenticated.
     """
-    session = session_manager.get(request.session_id)
+    user_id = user.id if user.is_authenticated else None
+    session = session_manager.get_with_owner(request.session_id, user_id)
     
     if session is None:
         raise HTTPException(
             status_code=404,
-            detail="Session not found or expired. Please upload again."
+            detail="Session not found, expired, or access denied. Please upload again."
         )
     
     if session.stats is None:

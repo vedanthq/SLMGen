@@ -16,12 +16,36 @@ from dataclasses import dataclass
 from fastapi import HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, JWTError
-
+from cachetools import TTLCache
 
 logger = logging.getLogger(__name__)
 
 # Security scheme for Swagger UI
 security = HTTPBearer(auto_error=False)
+
+# Cache JWKS for 15 minutes to avoid hitting Supabase on every request
+_jwks_cache: TTLCache = TTLCache(maxsize=1, ttl=900)
+
+
+def _get_jwks_cached(supabase_url: str) -> dict:
+    """Fetch JWKS from Supabase with caching."""
+    import requests
+    
+    cache_key = "jwks"
+    if cache_key in _jwks_cache:
+        return _jwks_cache[cache_key]
+    
+    jwks_url = f"{supabase_url}/auth/v1/.well-known/jwks.json"
+    try:
+        resp = requests.get(jwks_url, timeout=5)
+        resp.raise_for_status()
+        jwks = resp.json()
+        _jwks_cache[cache_key] = jwks
+        logger.info("JWKS fetched and cached")
+        return jwks
+    except Exception as e:
+        logger.error(f"Failed to fetch JWKS: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch signing keys")
 
 
 @dataclass
@@ -53,7 +77,7 @@ def verify_jwt(token: str) -> dict:
     Verify and decode a Supabase JWT token.
     
     Supabase uses ES256 (ECDSA) for JWT signing. We fetch the public keys
-    from their JWKS endpoint to verify tokens.
+    from their JWKS endpoint to verify tokens (with caching).
     
     Args:
         token: JWT access token
@@ -64,7 +88,6 @@ def verify_jwt(token: str) -> dict:
     Raises:
         HTTPException: If token is invalid
     """
-    import requests
     from jose import jwk
     
     try:
@@ -73,20 +96,12 @@ def verify_jwt(token: str) -> dict:
         token_alg = unverified_header.get("alg", "unknown")
         kid = unverified_header.get("kid")
         
-        logger.info(f"Token algorithm: {token_alg}, kid: {kid}")
+        logger.debug(f"Token algorithm: {token_alg}, kid: {kid}")
         
-        # For ES256 tokens, fetch JWKS from Supabase
+        # For ES256 tokens, fetch JWKS from Supabase (cached)
         if token_alg == "ES256":
             from app.supabase import get_supabase_url
-            jwks_url = f"{get_supabase_url()}/auth/v1/.well-known/jwks.json"
-            
-            try:
-                resp = requests.get(jwks_url, timeout=5)
-                resp.raise_for_status()
-                jwks = resp.json()
-            except Exception as e:
-                logger.error(f"Failed to fetch JWKS: {e}")
-                raise HTTPException(status_code=500, detail="Failed to fetch signing keys")
+            jwks = _get_jwks_cached(get_supabase_url())
             
             # Find the key matching the kid
             ec_key = None

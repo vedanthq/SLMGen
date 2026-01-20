@@ -25,7 +25,7 @@ def _hash_conversation(entry: dict) -> str:
         f"{m.get('role')}:{m.get('content', '')}"
         for m in messages
     )
-    return hashlib.md5(content.encode()).hexdigest()
+    return hashlib.sha256(content.encode()).hexdigest()
 
 
 def _check_duplicates(data: list[dict]) -> tuple[float, str]:
