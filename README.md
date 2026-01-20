@@ -5,7 +5,7 @@
 
 <div align="center">
 
-![SLMGEN Landing Page](docs/images/screenshot.png)
+![SLMGEN Landing Page](docs/images/screenshot_v2.png)
 
 **Fine-tune SLMs. 2x faster. For free.**
 
