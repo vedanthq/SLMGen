@@ -51,17 +51,38 @@ body {
 
 /* Glass effect for cards */
 .glass {
+  background: rgba(30, 37, 40, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(45, 52, 55, 0.6);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Interactive Glass Card */
+.glass-interactive {
+  background: rgba(30, 37, 40, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(45, 52, 55, 0.6);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.glass-interactive:hover {
   background: rgba(30, 37, 40, 0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
+  border-color: rgba(140, 207, 126, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
 /* Glass with glow */
 .glass-glow {
-  background: rgba(30, 37, 40, 0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
-  box-shadow: 0 0 40px rgba(140, 207, 126, 0.1);
+  background: rgba(30, 37, 40, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(140, 207, 126, 0.2);
+  box-shadow: 0 0 40px rgba(140, 207, 126, 0.05);
 }
 
 /* Smooth scrollbar */

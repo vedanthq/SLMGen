@@ -11,6 +11,7 @@
 
 'use client';
 
+import { motion } from 'framer-motion';
 import { Star, Lock } from '@/components/icons';
 import type { ModelRecommendation } from '@/lib/types';
 
@@ -41,20 +42,25 @@ export function ModelCard({ model, isPrimary = false, onSelect }: ModelCardProps
     };
 
     return (
-        <div
+        <motion.div
+            layout
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={onSelect ? { scale: 1.02, y: -4 } : { y: -2 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
             className={`
-                relative rounded-2xl p-6 transition-all duration-300
+                relative rounded-2xl p-6 glass-interactive
                 ${isPrimary
                     ? 'bg-gradient-to-br from-[#8ccf7e]/10 to-[#c47fd5]/10 border-2 border-[#8ccf7e]/50 shadow-xl shadow-[#8ccf7e]/10'
                     : 'bg-[#1e2528]/80 border border-[#2d3437] hover:border-[#8ccf7e]/50'
                 }
-                ${onSelect ? 'cursor-pointer hover:scale-[1.02]' : ''}
+                ${onSelect ? 'cursor-pointer' : ''}
             `}
             onClick={onSelect}
         >
             {/* Primary Badge */}
             {isPrimary && (
-                <div className="absolute -top-3 left-6 flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-[#8ccf7e] to-[#6cbfbf] rounded-full text-sm font-semibold text-[#141b1e]">
+                <div className="absolute -top-3 left-6 flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-[#8ccf7e] to-[#6cbfbf] rounded-full text-sm font-semibold text-[#141b1e] shadow-lg shadow-[#8ccf7e]/30 z-10">
                     <Star className="w-4 h-4" />
                     Best Match
                 </div>
@@ -73,15 +79,17 @@ export function ModelCard({ model, isPrimary = false, onSelect }: ModelCardProps
                             className="fill-none stroke-[#2d3437]"
                         />
                         {/* Score circle */}
-                        <circle
+                        <motion.circle
                             cx="48"
                             cy="48"
                             r={radius}
                             strokeWidth="8"
                             strokeDasharray={circumference}
-                            strokeDashoffset={strokeDashoffset}
+                            initial={{ strokeDashoffset: circumference }}
+                            animate={{ strokeDashoffset: strokeDashoffset }}
+                            transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
                             strokeLinecap="round"
-                            className={`fill-none transition-all duration-1000 ${getScoreStroke(model.score)}`}
+                            className={`fill-none ${getScoreStroke(model.score)}`}
                         />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -126,6 +134,6 @@ export function ModelCard({ model, isPrimary = false, onSelect }: ModelCardProps
             <div className="mt-4 pt-4 border-t border-[#2d3437]">
                 <code className="text-xs text-[#8a9899] font-mono break-all">{model.model_id}</code>
             </div>
-        </div>
+        </motion.div>
     );
 }
