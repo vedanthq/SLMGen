@@ -3,9 +3,10 @@
  * 
  * Hero section with stats and CTA to dashboard.
  * Everblush themed with Lucide icons.
- * Enhanced with Framer Motion animations.
+ * Enhanced with Framer Motion animations and text diffusion effects.
  * 
  * @author Eshan Roy <eshanized@proton.me>
+ * @contributor Vedant Singh Rajput <teleported0722@gmail.com>
  * @license MIT
  * @copyright 2026 Eshan Roy
  */
@@ -13,7 +14,7 @@
 'use client';
 
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { Navbar, Footer } from '@/components/navigation';
 import {
   Rocket,
@@ -81,6 +82,16 @@ const itemVariants = {
   },
 };
 
+const diffusionVariant: Variants = {
+  hidden: { filter: 'blur(12px)', opacity: 0, y: 10 },
+  visible: {
+    filter: 'blur(0px)',
+    opacity: 1,
+    y: 0,
+    transition: { duration: 1.2, ease: "easeOut" }
+  }
+};
+
 export default function HomePage() {
   return (
     <div className="min-h-screen hero-gradient overflow-hidden selection:bg-[#8ccf7e] selection:text-[#141b1e]">
@@ -101,10 +112,15 @@ export default function HomePage() {
             <span className="text-sm text-[#8a9899]">Powered by Unsloth & LoRA</span>
           </motion.div>
 
-          {/* Headline */}
-          <motion.h1 variants={itemVariants} className="text-5xl md:text-6xl lg:text-7xl font-bold text-[#dadada] mb-6 leading-[1.1] tracking-tight">
-            Your Data.<br />
-            <span className="gradient-text">Best Model. Matched.</span>
+          {/* Headline with Diffusion Effect */}
+          <motion.h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-[#dadada] mb-6 leading-[1.1] tracking-tight">
+            <motion.span variants={diffusionVariant} className="inline-block">Your Data.</motion.span><br />
+            <motion.span
+              variants={diffusionVariant}
+              className="gradient-text text-glow inline-block"
+            >
+              Best Model. Matched.
+            </motion.span>
           </motion.h1>
 
           <motion.p variants={itemVariants} className="text-xl text-[#8a9899] max-w-2xl mx-auto mb-10 leading-relaxed">
