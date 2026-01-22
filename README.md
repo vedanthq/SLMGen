@@ -27,10 +27,11 @@ SLMGEN is a production-ready web application that automates SLM fine-tuning. Upl
 
 | Feature | Description |
 |---------|-------------|
-| 📤 **Smart Upload** | Drag-and-drop JSONL with instant validation (min 50 examples) |
+| 📤 **Smart Upload** | Drag-and-drop JSONL with **Live Chat Preview** (min 50 examples) |
 | 📊 **Quality Scoring** | Duplicate detection, consistency checks, 0-100% quality score |
 | 🧠 **11 Model Support** | Phi-4, Llama 3.2, Gemma 2, Qwen 2.5, Mistral 7B + more |
 | 🎯 **100-Point Matching** | Task fit (50pts) + Deploy target (30pts) + Data traits (20pts) |
+| 💻 **Training Simulator** | Real-time terminal simulation during generation phase |
 | 📓 **Self-Contained Notebooks** | Dataset embedded as base64 - no file uploads needed |
 | ☁️ **6 Deploy Targets** | Cloud, Server, Desktop, Edge, Mobile, Browser |
 
@@ -60,7 +61,8 @@ SLMGEN is a production-ready web application that automates SLM fine-tuning. Upl
 | Component | Technology |
 |-----------|------------|
 | **Backend** | Python 3.11, FastAPI, Pydantic v2 |
-| **Frontend** | Next.js 16, TypeScript, React 19 |
+| **Frontend** | Next.js 16, TypeScript, React 19, Framer Motion |
+| **Design** | Tailwind CSS, JetBrains Mono, Everblush Theme |
 | **Auth** | Supabase (OAuth + Email) |
 | **Training** | Unsloth + LoRA on Google Colab (Free T4) |
 | **Deployment** | Vercel (Frontend) + Render (Backend) |
@@ -210,7 +212,10 @@ MIT License - See [LICENSE](LICENSE)
 
 ---
 
-## 👤 Author
+## 👥 Authors
+
+**Vedant Singh Rajput**
+- 🐙 [@vedanthq](https://github.com/vedanthq)
 
 **Eshan Roy**
 - 📧 eshanized@proton.me

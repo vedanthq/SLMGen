@@ -4,6 +4,14 @@
  * Provides auth state and methods throughout the app.
  * SSG-safe implementation that lazily initializes Supabase client.
  * 
+ * When running locally without Supabase (AUTH_DISABLED=true on backend):
+ *   - createClient() returns null
+ *   - isConfigured is set to false
+ *   - All auth methods return early with "Not configured" errors
+ *   - The dashboard works normally in anonymous mode!
+ * 
+ * Contributor: Vedant Singh Rajput <teleported0722@gmail.com>
+ * 
  * @author Eshan Roy <eshanized@proton.me>
  * @license MIT
  * @copyright 2026 Eshan Roy
