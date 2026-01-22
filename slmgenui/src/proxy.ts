@@ -28,9 +28,19 @@ export async function proxy(request: NextRequest) {
         request,
     })
 
+    // Check if Supabase is configured
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+    // If running in local dev mode without Supabase, bypass all auth checks
+    if (!supabaseUrl || !supabaseKey) {
+        // console.warn('Supabase not configured in middleware - bypassing auth')
+        return response
+    }
+
     const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        supabaseUrl,
+        supabaseKey,
         {
             cookies: {
                 getAll() {
